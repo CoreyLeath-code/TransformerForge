@@ -17,13 +17,10 @@ $ python train.py --dataset s3://bucket/mydata --base_model meta-llama/Llama-3-8
 """
 
 import argparse
-import json
 import os
 from datetime import datetime
-from pathlib import Path
 from typing import Dict
 
-import boto3
 from sagemaker.huggingface import HuggingFace
 import snowflake.connector
 
@@ -102,35 +99,41 @@ def register_model(hp: Dict, model_uri: str) -> None:
         schema="PUBLIC",
         warehouse="COMPUTE_WH",
     )
-    cur = conn.cursor()
-    cur.execute(
-        """
-        CREATE TABLE IF NOT EXISTS MODEL_REGISTRY (
-          ts TIMESTAMP,
-          job_name STRING,
-          base_model STRING,
-          epochs INT,
-          lr FLOAT,
-          model_uri STRING
-        )
-        """
-    )
-    cur.execute(
-        """
-        INSERT INTO MODEL_REGISTRY (ts, job_name, base_model, epochs, lr, model_uri)
-        VALUES (%(ts)s, %(job)s, %(base)s, %(ep)s, %(lr)s, %(uri)s)
-        """,
-        {
-            "ts": datetime.utcnow(),
-            "job": hp["job_name"],
-            "base": hp["model_name"],
-            "ep": hp["epochs"],
-            "lr": hp["learning_rate"],
-            "uri": model_uri,
-        },
-    )
-    cur.close()
-    conn.close()
+    try:
+        cur = None
+        cur = conn.cursor()
+        try:
+            cur.execute(
+                """
+                CREATE TABLE IF NOT EXISTS MODEL_REGISTRY (
+                  ts TIMESTAMP,
+                  job_name STRING,
+                  base_model STRING,
+                  epochs INT,
+                  lr FLOAT,
+                  model_uri STRING
+                )
+                """
+            )
+            cur.execute(
+                """
+                INSERT INTO MODEL_REGISTRY (ts, job_name, base_model, epochs, lr, model_uri)
+                VALUES (%(ts)s, %(job)s, %(base)s, %(ep)s, %(lr)s, %(uri)s)
+                """,
+                {
+                    "ts": datetime.utcnow(),
+                    "job": hp["job_name"],
+                    "base": hp["model_name"],
+                    "ep": hp["epochs"],
+                    "lr": hp["learning_rate"],
+                    "uri": model_uri,
+                },
+            )
+        finally:
+            if cur is not None:
+                cur.close()
+    finally:
+        conn.close()
     print("✅ Model metadata logged to Snowflake")
 
 

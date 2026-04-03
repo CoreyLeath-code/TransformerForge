@@ -12,9 +12,7 @@ The test:
 PySpark is used only if installed; otherwise the test is skipped in CI.
 """
 
-import os
 import json
-import shutil
 import subprocess
 from pathlib import Path
 

@@ -1,4 +1,3 @@
-import boto3
 from moto import mock_sagemaker
 from src.python.train import build_estimator
 

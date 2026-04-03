@@ -10,11 +10,10 @@ Serves TransformerForge’s summarization + RAG endpoints.
 """
 
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import Response
 from pydantic import BaseModel
 import prometheus_client as prom
 from prometheus_client import Counter, Summary
-from transformers import pipeline, AutoTokenizer, AutoModelForSeq2SeqLM
-import torch
 import os
 
 # ────────────────────── Prometheus Metrics ─────────────────────────
@@ -42,15 +41,25 @@ try:
 except ImportError:
     print("🔬 OpenTelemetry not installed; tracing disabled.")
 
-# ────────────────────── Load Summarizer Model ──────────────────────
+# ────────────────────── Load Summarizer Model (lazy) ──────────────────
 MODEL_NAME = os.getenv("BASE_MODEL", "facebook/bart-large-cnn")
-DEVICE = 0 if torch.cuda.is_available() else -1
-summarizer = pipeline(
-    "summarization",
-    model=AutoModelForSeq2SeqLM.from_pretrained(MODEL_NAME),
-    tokenizer=AutoTokenizer.from_pretrained(MODEL_NAME),
-    device=DEVICE
-)
+_summarizer = None
+
+
+def _get_summarizer():
+    global _summarizer
+    if _summarizer is None:
+        from transformers import pipeline, AutoTokenizer, AutoModelForSeq2SeqLM
+        import torch
+
+        device = 0 if torch.cuda.is_available() else -1
+        _summarizer = pipeline(
+            "summarization",
+            model=AutoModelForSeq2SeqLM.from_pretrained(MODEL_NAME),
+            tokenizer=AutoTokenizer.from_pretrained(MODEL_NAME),
+            device=device,
+        )
+    return _summarizer
 
 # ────────────────────── Request schema ─────────────────────────────
 class TextIn(BaseModel):
@@ -65,7 +74,7 @@ def health():
 
 @app.get("/metrics")
 def metrics():
-    return prom.generate_latest(), 200, {"Content-Type": prom.CONTENT_TYPE_LATEST}
+    return Response(prom.generate_latest(), media_type=prom.CONTENT_TYPE_LATEST)
 
 @app.post("/summarize")
 @LATENCY_SUM.time()
@@ -73,7 +82,7 @@ def summarize(payload: TextIn):
     REQ_COUNTER.inc()
     if not payload.text.strip():
         raise HTTPException(status_code=400, detail="Text cannot be empty")
-    summary = summarizer(
+    summary = _get_summarizer()(
         payload.text,
         max_length=payload.max_length,
         min_length=payload.min_length,
