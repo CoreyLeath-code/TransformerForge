@@ -13,12 +13,10 @@ torch.nn.functional.scaled_dot_product_attention (PyTorch ≥ 2.0).
 from __future__ import annotations
 import ctypes
 from pathlib import Path
-from typing import Tuple
 
 import numpy as np
 import torch
 from torch import Tensor
-from torch.nn import functional as F
 
 # ------------------------------------------------------------------ #
 # 1. Attempt to load shared library
@@ -99,7 +97,7 @@ def fast_attention_torch(q: Tensor, k: Tensor, v: Tensor) -> Tensor:
     k = k.unsqueeze(0)
     v = v.unsqueeze(0)
     attn = torch.softmax((q @ k.transpose(-2, -1)) * scale, dim=-1)
-    return attn @ v  # (1, seq, d_v) → squeeze
+    return (attn @ v).squeeze(0)  # (seq, d_v)
 
 
 # ------------------------------------------------------------------ #

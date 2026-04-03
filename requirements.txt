@@ -6,3 +6,8 @@ fastapi
 uvicorn
 python-dotenv
 pytest
+prometheus-client
+httpx
+numpy
+torch
+transformers
