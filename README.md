@@ -1,18 +1,25 @@
-# 🔥 TransformerForge — Llama 3 + RAG LLM Platform
+TransformerForge — Advanced Transformer Model Engineering
 
-![Python](https://img.shields.io/badge/Python-3.10-blue)
-![Llama3](https://img.shields.io/badge/Llama%203-Meta-orange)
-![LangChain](https://img.shields.io/badge/LangChain-Orchestration-blue)
-![RAG](https://img.shields.io/badge/RAG-Enabled-brightgreen)
-![FAISS](https://img.shields.io/badge/FAISS-Vector%20Store-green)
-![FastAPI](https://img.shields.io/badge/FastAPI-API-success)
-![Docker](https://img.shields.io/badge/Docker-Ready-blue)
-![CI](https://github.com/Trojan3877/TransformerForge/actions/workflows/ci.yml/badge.svg)
-![License](https://img.shields.io/badge/License-MIT-lightgrey)
-
----
-
-## 🚀 Overview
+![Python](https://img.shields.io/badge/Python-3.10+-blue?logo=python)
+![PyTorch](https://img.shields.io/badge/PyTorch-Deep%20Learning-red?logo=pytorch)
+![Transformers](https://img.shields.io/badge/Transformers-NLP-orange)
+![HuggingFace](https://img.shields.io/badge/HuggingFace-Models-yellow?logo=huggingface)
+![CUDA](https://img.shields.io/badge/CUDA-GPU%20Acceleration-green)
+![Training](https://img.shields.io/badge/Training-Distributed-blue)
+![Inference](https://img.shields.io/badge/Inference-Optimized-purple)
+![Docker](https://img.shields.io/badge/Docker-Containerized-blue?logo=docker)
+![Kubernetes](https://img.shields.io/badge/Kubernetes-Orchestrated-blue?logo=kubernetes)
+![CI/CD](https://img.shields.io/badge/CI/CD-GitHub%20Actions-black?logo=githubactions)
+![MLflow](https://img.shields.io/badge/MLflow-Tracking-blue)
+![License](https://img.shields.io/badge/License-MIT-green)
+![Status](https://img.shields.io/badge/Status-Production--Ready-brightgreen)
+![Stars](https://img.shields.io/github/stars/Trojan3877/TransformerForge?style=social)
+![Forks](https://img.shields.io/github/forks/Trojan3877/TransformerForge?style=social)
+![LLM](https://img.shields.io/badge/LLM-Transformer%20Architecture-purple)
+![Attention](https://img.shields.io/badge/Attention-Mechanism-blue)
+![SequenceModeling](https://img.shields.io/badge/Sequence-Modeling-green)
+![Scalable](https://img.shields.io/badge/Scale-Horizontal-blue)
+![LowLatency](https://img.shields.io/badge/Latency-Optimized-critical)
 
 **TransformerForge** is a **production-grade Large Language Model (LLM) platform** designed to demonstrate how **modern AI systems are built in Big Tech**.
 
@@ -27,20 +34,20 @@ It integrates:
 
 This repository focuses on **LLM systems engineering**, not toy demos.
 
----
+
 
 ## 🧠 System Architecture
 User / API Request ↓ FastAPI Service Layer ↓ LLM Agent (LangChain) ↓ RAG Pipeline ├─ Vector Store (FAISS) ├─ Embeddings (Sentence Transformers) ↓ Llama 3 (Meta) ↓ Grounded Response
----
 
-## 🧩 Key Features
 
-### 🔹 Llama 3 Integration
+
+
+🔹 Llama 3 Integration
 - Meta-aligned open-weight LLM
 - Deterministic inference
 - Local or hosted deployment support
 
-### 🔹 Retrieval-Augmented Generation (RAG)
+ Retrieval-Augmented Generation (RAG)
 - Document ingestion pipeline
 - FAISS vector indexing
 - Top-K semantic retrieval
