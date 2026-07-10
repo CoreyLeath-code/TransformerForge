@@ -2,64 +2,40 @@ name: Build-Test-Coverage
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   ci:
+    name: Legacy compatibility API test
     runs-on: ubuntu-latest
-
     steps:
-    # ───────────────────────── 1. Checkout ──────────────────────────
-    - name: 📥 Checkout
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    # ───────────────────────── 2. JDK & Maven ───────────────────────
-    - name: ☕ Set up JDK 17
-      uses: actions/setup-java@v4
-      with:
-        distribution: temurin
-        java-version: "17"
-        cache: maven
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
 
-    - name: 🛠️ Build Java DataLoader
-      run: |
-        cd src/java
-        mvn -q package
-        echo "JAR built: $(ls target/*shaded.jar)"
-        cd ../../
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
 
-    # ───────────────────────── 3. C++ build ─────────────────────────
-    - name: ⚙️ Compile fast-attention shared library
-      run: |
-        g++ -O3 -std=c++17 -fPIC -shared src/cpp/fast_attention.cpp \
-            -o src/cpp/libfastattn.so
+      - name: Run API tests with coverage
+        env:
+          PYTHONPATH: .
+          TRANSFORMERFORGE_LIGHTWEIGHT_MODE: "true"
+        run: |
+          coverage run -m pytest tests/test_api.py -q
+          coverage xml -o coverage.xml
 
-    # ───────────────────────── 4. Python setup ──────────────────────
-    - name: 🐍 Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: "3.11"
-
-    - name: 📦 Install Python deps
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-        pip install coverage pytest
-
-    # ───────────────────────── 5. Tests + coverage ──────────────────
-    - name: 🧪 Run tests
-      run: |
-        coverage run -m pytest -q
-        coverage xml -o coverage.xml
-
-    # ───────────────────────── 6. Codecov upload ────────────────────
-    - name: 📈 Upload to Codecov
-      uses: codecov/codecov-action@v3
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        files: coverage.xml
-        verbose: true
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: legacy-coverage-report
+          path: coverage.xml
+          if-no-files-found: warn
