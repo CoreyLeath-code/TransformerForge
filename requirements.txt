@@ -1,13 +1,11 @@
-langchain
-langchain-community
-faiss-cpu
-sentence-transformers
-fastapi
-uvicorn
-python-dotenv
-pytest
-prometheus-client
-httpx
-numpy
-torch
-transformers
+# TransformerForge lightweight runtime dependencies
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+pydantic==2.10.5
+python-dotenv==1.0.1
+prometheus-client==0.21.1
+httpx==0.28.1
+opentelemetry-api==1.29.0
+opentelemetry-sdk==1.29.0
+opentelemetry-instrumentation-fastapi==0.50b0
+opentelemetry-exporter-otlp-proto-http==1.29.0

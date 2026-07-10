@@ -1,38 +1,36 @@
 # Changelog
-All notable changes to **TransformerForge** will be documented in this file.
 
-The project follows **Semantic Versioning 2.0.0** and the 
-[Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format.
+All notable changes to **TransformerForge** are documented in this file.
 
----
+The project follows Semantic Versioning and the Keep a Changelog format.
 
 ## [Unreleased]
+
 ### Added
-- Helm chart autoscaling via HPA and optional KEDA `ScaledObject`.
-- Ansible blue-green playbook with secret rotation (`infra/ansible/deploy.yml`).
-- Tailwind/React live metrics dashboard (`ui/src/App.jsx`).
-- Multi-stage Dockerfile with Java, C++, UI build stages.
-- Java Delta-Lake DataLoader + shaded JAR.
-- C++17 flash-attention kernel (`libfastattn.so`) and Python wrapper.
-- SageMaker fine-tune launcher with Snowflake registry.
-- GitHub Actions CI pipeline (Java + C++ + Python) + Codecov.
-- Terraform Snowflake module (`snowflake.tf`).
-- MIT License, Code of Conduct, Contributing guide.
-- Integration test suite and Makefile.
-- Docker-compose stack for one-command local spin-up.
+
+- Python 3.10 and 3.11 CI matrix.
+- API contract, validation, and deterministic fallback tests.
+- Coverage XML and JUnit test artifacts.
+- Container build and live health smoke testing.
+- CodeQL, Gitleaks, Trivy, pip-audit, Dependabot, and CycloneDX SBOM automation.
+- GitHub Release source artifacts and GHCR image publishing.
+- Security, contribution, release-readiness, and nine-tier deployment-hygiene documentation.
+- Existing Helm, Ansible, dashboard, native acceleration, SageMaker, Snowflake, Terraform, and Docker Compose infrastructure remains part of the broader platform roadmap.
 
 ### Changed
-- README rebranded to **TransformerForge** with new badges and roadmap.
-- Helm `values.yaml` tuned for 2-replica default and CPU autoscaling.
 
-### Removed
-- (Nothing yet)
+- Hardened request validation with bounded input sizes and length constraints.
+- Added deterministic lightweight inference for CI and constrained environments.
+- Moved heavyweight transformer initialization behind a cached lazy loader.
+- Reworked the production image into a multi-stage, non-root runtime.
+- Pinned runtime and development dependencies for reproducibility.
+- Updated repository links to the current `CoreyLeath-code` owner.
 
----
+## [0.1.0] - 2025-07-01
 
-## [0.1.0] — 2025-07-01
 ### Added
-- Initial public release of TransformerForge scaffold: README, directory layout, requirements, minimal API, and CI badge.
 
-[Unreleased]: https://github.com/Trojan3877/TransformerForge/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/Trojan3877/TransformerForge/releases/tag/v0.1.0
+- Initial public TransformerForge scaffold, API, dependency manifest, documentation, and CI foundation.
+
+[Unreleased]: https://github.com/CoreyLeath-code/TransformerForge/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/CoreyLeath-code/TransformerForge/releases/tag/v0.1.0

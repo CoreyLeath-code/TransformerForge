@@ -1,14 +1,33 @@
 # Contributing to TransformerForge
 
-Thank you for your interest in improving TransformerForge!  
-We welcome issues, pull requests, and feature discussions.
-
-## 🏃‍♂️ Quick Start
+## Development setup
 
 ```bash
-git clone https://github.com/Trojan3877/TransformerForge.git
+git clone https://github.com/CoreyLeath-code/TransformerForge.git
 cd TransformerForge
-python -m venv venv && source venv/bin/activate
-pip install -r requirements.txt
-make build-cpp build-java
-make dev          # FastAPI on :8000
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+pip install -r requirements-dev.txt
+```
+
+## Required validation
+
+```bash
+ruff check src tests --select E9,F63,F7,F82
+python -m compileall -q src tests
+TRANSFORMERFORGE_LIGHTWEIGHT_MODE=true pytest tests -v --cov=src
+docker build -t transformerforge:local .
+```
+
+## Pull-request standard
+
+- Use focused branches and conventional commit messages.
+- Explain the problem, design decision, test evidence, operational impact, and rollback plan.
+- Add tests for behavior changes.
+- Do not commit credentials, `.env` files, generated model artifacts, or production data.
+- Keep API contracts backward compatible unless a migration path is documented.
+
+## Review criteria
+
+Reviewers should assess correctness, security, model reproducibility, failure behavior, observability, performance, maintainability, deployment impact, and rollback safety.
