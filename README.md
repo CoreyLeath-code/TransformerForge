@@ -1,5 +1,5 @@
 TransformerForge — Advanced Transformer Model Engineering
-(https://github.com/CoreyLeath-code/TransformerForge/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/CoreyLeath-code/TransformerForge/actions/workflows/ci.yml)
+
 [![Security & Supply Chain](https://github.com/CoreyLeath-code/TransformerForge/actions/workflows/security.yml/badge.svg?branch=main)](https://github.com/CoreyLeath-code/TransformerForge/actions/workflows/security.yml)
 [![Release Engineering](https://github.com/CoreyLeath-code/TransformerForge/actions/workflows/release.yml/badge.svg)](https://github.com/CoreyLeath-code/TransformerForge/actions/workflows/release.yml)
 ![Python](https://img.shields.io/badge/Python-3.10%20%7C%203.11-3776AB?logo=python&logoColor=white)
