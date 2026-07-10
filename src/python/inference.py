@@ -20,6 +20,7 @@ from pydantic import BaseModel, Field, model_validator
 APP_VERSION: Final[str] = "1.1.0"
 DEFAULT_MODEL: Final[str] = "facebook/bart-large-cnn"
 MAX_INPUT_CHARACTERS: Final[int] = 20_000
+DEFAULT_MIN_LENGTH: Final[int] = 30
 
 REQ_COUNTER = Counter("inference_total", "Total inference requests")
 ERROR_COUNTER = Counter("inference_errors_total", "Total failed inference requests")
@@ -59,10 +60,12 @@ class TextIn(BaseModel):
 
     text: str = Field(min_length=1, max_length=MAX_INPUT_CHARACTERS)
     max_length: int = Field(default=128, ge=8, le=512)
-    min_length: int = Field(default=30, ge=1, le=256)
+    min_length: int | None = Field(default=None, ge=1, le=256)
 
     @model_validator(mode="after")
     def validate_lengths(self) -> "TextIn":
+        if self.min_length is None:
+            self.min_length = min(DEFAULT_MIN_LENGTH, self.max_length)
         if self.min_length > self.max_length:
             raise ValueError("min_length must be less than or equal to max_length")
         if not self.text.strip():
@@ -112,7 +115,7 @@ def _summarize_text(payload: TextIn) -> tuple[str, str]:
     result = _get_summarizer()(
         payload.text,
         max_length=payload.max_length,
-        min_length=payload.min_length,
+        min_length=payload.min_length or min(DEFAULT_MIN_LENGTH, payload.max_length),
         truncation=True,
     )[0]["summary_text"]
     return str(result).strip(), "transformer"
