@@ -50,7 +50,7 @@ def test_lightweight_summarization_contract() -> None:
         },
     )
 
-    assert response.status_code == 200
+    assert response.status_code == 200, response.text
     payload = response.json()
     assert payload["summary"]
     assert payload["backend"] == "extractive-fallback"
