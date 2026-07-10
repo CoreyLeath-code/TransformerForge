@@ -1,16 +1,7 @@
 TransformerForge — Advanced Transformer Model Engineering
-<!-- ========================================================= -->
-<!-- TransformerForge — CI, Security & Release Status          -->
-<!-- ========================================================= -->
-
-[![TransformerForge Enterprise CI](https://github.com/CoreyLeath-code/TransformerForge/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/CoreyLeath-code/TransformerForge/actions/workflows/ci.yml)
+(https://github.com/CoreyLeath-code/TransformerForge/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/CoreyLeath-code/TransformerForge/actions/workflows/ci.yml)
 [![Security & Supply Chain](https://github.com/CoreyLeath-code/TransformerForge/actions/workflows/security.yml/badge.svg?branch=main)](https://github.com/CoreyLeath-code/TransformerForge/actions/workflows/security.yml)
 [![Release Engineering](https://github.com/CoreyLeath-code/TransformerForge/actions/workflows/release.yml/badge.svg)](https://github.com/CoreyLeath-code/TransformerForge/actions/workflows/release.yml)
-
-<!-- ========================================================= -->
-<!-- Core AI & Machine-Learning Stack                          -->
-<!-- ========================================================= -->
-
 ![Python](https://img.shields.io/badge/Python-3.10%20%7C%203.11-3776AB?logo=python&logoColor=white)
 ![PyTorch](https://img.shields.io/badge/PyTorch-Transformer%20Runtime-EE4C2C?logo=pytorch&logoColor=white)
 ![Hugging Face](https://img.shields.io/badge/Hugging%20Face-Transformers-FFD21E?logo=huggingface&logoColor=black)
@@ -21,11 +12,6 @@ TransformerForge — Advanced Transformer Model Engineering
 ![RAG](https://img.shields.io/badge/RAG-Retrieval%20Augmented%20Generation-purple)
 ![LLM](https://img.shields.io/badge/LLM-Optional%20Full%20Runtime-blueviolet)
 ![Deterministic Fallback](https://img.shields.io/badge/Inference-Deterministic%20Fallback-success)
-
-<!-- ========================================================= -->
-<!-- API & Runtime                                             -->
-<!-- ========================================================= -->
-
 ![FastAPI](https://img.shields.io/badge/FastAPI-Inference%20API-009688?logo=fastapi&logoColor=white)
 ![Pydantic](https://img.shields.io/badge/Pydantic-Validated%20Contracts-E92063?logo=pydantic&logoColor=white)
 ![Uvicorn](https://img.shields.io/badge/Uvicorn-ASGI%20Runtime-499848)
@@ -34,11 +20,6 @@ TransformerForge — Advanced Transformer Model Engineering
 ![Health Endpoint](https://img.shields.io/badge/API-Health%20Checked-success)
 ![Bounded Inputs](https://img.shields.io/badge/API-Bounded%20Input%20Validation-success)
 ![Lazy Model Loading](https://img.shields.io/badge/Models-Lazy%20Loaded-blue)
-
-<!-- ========================================================= -->
-<!-- Testing & Code Quality                                    -->
-<!-- ========================================================= -->
-
 ![Pytest](https://img.shields.io/badge/Tests-Pytest-0A9EDC?logo=pytest&logoColor=white)
 ![API Contract Tests](https://img.shields.io/badge/API-Contract%20Tests-success)
 ![Failure-Mode Tests](https://img.shields.io/badge/Testing-Failure%20Modes-success)
@@ -48,11 +29,6 @@ TransformerForge — Advanced Transformer Model Engineering
 ![Ruff](https://img.shields.io/badge/Ruff-Correctness%20Gate-D7FF64?logo=ruff&logoColor=black)
 ![Compile Validation](https://img.shields.io/badge/Python-Syntax%20Validated-3776AB)
 ![Reproducible Tests](https://img.shields.io/badge/Tests-Deterministic-success)
-
-<!-- ========================================================= -->
-<!-- Containers & Deployment                                   -->
-<!-- ========================================================= -->
-
 ![Docker](https://img.shields.io/badge/Docker-Multi--Stage-2496ED?logo=docker&logoColor=white)
 ![Non-Root Runtime](https://img.shields.io/badge/Runtime-Non--Root-success)
 ![Container Health](https://img.shields.io/badge/Container-Live%20Health%20Test-success)
@@ -61,11 +37,6 @@ TransformerForge — Advanced Transformer Model Engineering
 ![Release Readiness](https://img.shields.io/badge/Release-Readiness%20Contract-success)
 ![Semantic Versioning](https://img.shields.io/badge/Versioning-SemVer-F05032)
 ![GitHub Releases](https://img.shields.io/badge/Releases-Automated-success?logo=github)
-
-<!-- ========================================================= -->
-<!-- Security & Software Supply Chain                          -->
-<!-- ========================================================= -->
-
 ![CodeQL](https://img.shields.io/badge/CodeQL-Static%20Analysis-2F81F7?logo=github&logoColor=white)
 ![Gitleaks](https://img.shields.io/badge/Gitleaks-Secret%20Scanning-orange)
 ![Trivy](https://img.shields.io/badge/Trivy-Vulnerability%20Scanning-1904DA?logo=aqua&logoColor=white)
