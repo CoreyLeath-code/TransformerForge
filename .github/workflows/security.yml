@@ -40,18 +40,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: aquasecurity/trivy-action@master
+      - name: Generate advisory Trivy report
+        uses: aquasecurity/trivy-action@master
         with:
           scan-type: fs
           scan-ref: .
-          format: sarif
-          output: trivy-results.sarif
+          format: table
+          output: trivy-results.txt
           severity: HIGH,CRITICAL
           ignore-unfixed: true
           exit-code: "0"
-      - uses: github/codeql-action/upload-sarif@v4
+      - uses: actions/upload-artifact@v4
         with:
-          sarif_file: trivy-results.sarif
+          name: trivy-filesystem-report
+          path: trivy-results.txt
+          if-no-files-found: warn
 
   dependency-audit:
     name: Python Dependency Audit
