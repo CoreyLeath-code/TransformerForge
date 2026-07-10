@@ -1,25 +1,100 @@
 TransformerForge — Advanced Transformer Model Engineering
+<!-- ========================================================= -->
+<!-- TransformerForge — CI, Security & Release Status          -->
+<!-- ========================================================= -->
 
-![Python](https://img.shields.io/badge/Python-3.10+-blue?logo=python)
-![PyTorch](https://img.shields.io/badge/PyTorch-Deep%20Learning-red?logo=pytorch)
-![Transformers](https://img.shields.io/badge/Transformers-NLP-orange)
-![HuggingFace](https://img.shields.io/badge/HuggingFace-Models-yellow?logo=huggingface)
-![CUDA](https://img.shields.io/badge/CUDA-GPU%20Acceleration-green)
-![Training](https://img.shields.io/badge/Training-Distributed-blue)
-![Inference](https://img.shields.io/badge/Inference-Optimized-purple)
-![Docker](https://img.shields.io/badge/Docker-Containerized-blue?logo=docker)
-![Kubernetes](https://img.shields.io/badge/Kubernetes-Orchestrated-blue?logo=kubernetes)
-![CI/CD](https://img.shields.io/badge/CI/CD-GitHub%20Actions-black?logo=githubactions)
-![MLflow](https://img.shields.io/badge/MLflow-Tracking-blue)
-![License](https://img.shields.io/badge/License-MIT-green)
-![Status](https://img.shields.io/badge/Status-Production--Ready-brightgreen)
-![Stars](https://img.shields.io/github/stars/Trojan3877/TransformerForge?style=social)
-![Forks](https://img.shields.io/github/forks/Trojan3877/TransformerForge?style=social)
-![LLM](https://img.shields.io/badge/LLM-Transformer%20Architecture-purple)
-![Attention](https://img.shields.io/badge/Attention-Mechanism-blue)
-![SequenceModeling](https://img.shields.io/badge/Sequence-Modeling-green)
-![Scalable](https://img.shields.io/badge/Scale-Horizontal-blue)
-![LowLatency](https://img.shields.io/badge/Latency-Optimized-critical)
+[![TransformerForge Enterprise CI](https://github.com/CoreyLeath-code/TransformerForge/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/CoreyLeath-code/TransformerForge/actions/workflows/ci.yml)
+[![Security & Supply Chain](https://github.com/CoreyLeath-code/TransformerForge/actions/workflows/security.yml/badge.svg?branch=main)](https://github.com/CoreyLeath-code/TransformerForge/actions/workflows/security.yml)
+[![Release Engineering](https://github.com/CoreyLeath-code/TransformerForge/actions/workflows/release.yml/badge.svg)](https://github.com/CoreyLeath-code/TransformerForge/actions/workflows/release.yml)
+
+<!-- ========================================================= -->
+<!-- Core AI & Machine-Learning Stack                          -->
+<!-- ========================================================= -->
+
+![Python](https://img.shields.io/badge/Python-3.10%20%7C%203.11-3776AB?logo=python&logoColor=white)
+![PyTorch](https://img.shields.io/badge/PyTorch-Transformer%20Runtime-EE4C2C?logo=pytorch&logoColor=white)
+![Hugging Face](https://img.shields.io/badge/Hugging%20Face-Transformers-FFD21E?logo=huggingface&logoColor=black)
+![Transformers](https://img.shields.io/badge/Transformers-Summarization-FF6F00)
+![LangChain](https://img.shields.io/badge/LangChain-LLM%20Orchestration-1C3C3C)
+![Sentence Transformers](https://img.shields.io/badge/Sentence--Transformers-Embeddings-8A2BE2)
+![FAISS](https://img.shields.io/badge/FAISS-Vector%20Search-0467DF)
+![RAG](https://img.shields.io/badge/RAG-Retrieval%20Augmented%20Generation-purple)
+![LLM](https://img.shields.io/badge/LLM-Optional%20Full%20Runtime-blueviolet)
+![Deterministic Fallback](https://img.shields.io/badge/Inference-Deterministic%20Fallback-success)
+
+<!-- ========================================================= -->
+<!-- API & Runtime                                             -->
+<!-- ========================================================= -->
+
+![FastAPI](https://img.shields.io/badge/FastAPI-Inference%20API-009688?logo=fastapi&logoColor=white)
+![Pydantic](https://img.shields.io/badge/Pydantic-Validated%20Contracts-E92063?logo=pydantic&logoColor=white)
+![Uvicorn](https://img.shields.io/badge/Uvicorn-ASGI%20Runtime-499848)
+![Prometheus](https://img.shields.io/badge/Prometheus-Metrics-E6522C?logo=prometheus&logoColor=white)
+![OpenTelemetry](https://img.shields.io/badge/OpenTelemetry-Distributed%20Tracing-000000?logo=opentelemetry&logoColor=white)
+![Health Endpoint](https://img.shields.io/badge/API-Health%20Checked-success)
+![Bounded Inputs](https://img.shields.io/badge/API-Bounded%20Input%20Validation-success)
+![Lazy Model Loading](https://img.shields.io/badge/Models-Lazy%20Loaded-blue)
+
+<!-- ========================================================= -->
+<!-- Testing & Code Quality                                    -->
+<!-- ========================================================= -->
+
+![Pytest](https://img.shields.io/badge/Tests-Pytest-0A9EDC?logo=pytest&logoColor=white)
+![API Contract Tests](https://img.shields.io/badge/API-Contract%20Tests-success)
+![Failure-Mode Tests](https://img.shields.io/badge/Testing-Failure%20Modes-success)
+![Python Matrix](https://img.shields.io/badge/Test%20Matrix-Python%203.10%20%7C%203.11-blue)
+![Coverage](https://img.shields.io/badge/Coverage-XML%20Evidence-success)
+![JUnit](https://img.shields.io/badge/Tests-JUnit%20Artifacts-blue)
+![Ruff](https://img.shields.io/badge/Ruff-Correctness%20Gate-D7FF64?logo=ruff&logoColor=black)
+![Compile Validation](https://img.shields.io/badge/Python-Syntax%20Validated-3776AB)
+![Reproducible Tests](https://img.shields.io/badge/Tests-Deterministic-success)
+
+<!-- ========================================================= -->
+<!-- Containers & Deployment                                   -->
+<!-- ========================================================= -->
+
+![Docker](https://img.shields.io/badge/Docker-Multi--Stage-2496ED?logo=docker&logoColor=white)
+![Non-Root Runtime](https://img.shields.io/badge/Runtime-Non--Root-success)
+![Container Health](https://img.shields.io/badge/Container-Live%20Health%20Test-success)
+![Minimal Runtime](https://img.shields.io/badge/Container-Minimal%20Runtime-blue)
+![GHCR](https://img.shields.io/badge/GHCR-Container%20Publishing-24292F?logo=github&logoColor=white)
+![Release Readiness](https://img.shields.io/badge/Release-Readiness%20Contract-success)
+![Semantic Versioning](https://img.shields.io/badge/Versioning-SemVer-F05032)
+![GitHub Releases](https://img.shields.io/badge/Releases-Automated-success?logo=github)
+
+<!-- ========================================================= -->
+<!-- Security & Software Supply Chain                          -->
+<!-- ========================================================= -->
+
+![CodeQL](https://img.shields.io/badge/CodeQL-Static%20Analysis-2F81F7?logo=github&logoColor=white)
+![Gitleaks](https://img.shields.io/badge/Gitleaks-Secret%20Scanning-orange)
+![Trivy](https://img.shields.io/badge/Trivy-Vulnerability%20Scanning-1904DA?logo=aqua&logoColor=white)
+![pip-audit](https://img.shields.io/badge/pip--audit-Dependency%20Audit-blueviolet)
+![Dependabot](https://img.shields.io/badge/Dependabot-Automated%20Updates-025E8C?logo=dependabot&logoColor=white)
+![SBOM](https://img.shields.io/badge/SBOM-CycloneDX-2D9CDB)
+![Supply Chain](https://img.shields.io/badge/Supply%20Chain-Automated%20Verification-success)
+![Security Policy](https://img.shields.io/badge/Security-Disclosure%20Policy-success)
+![L6 Hygiene](https://img.shields.io/badge/L6%20Engineering-9--Tier%20Deployment%20Hygiene-gold)
+![Source Hygiene](https://img.shields.io/badge/Tier%201-Source%20Hygiene-blue)
+![Test Engineering](https://img.shields.io/badge/Tier%202-Test%20Engineering-blue)
+![Static Quality](https://img.shields.io/badge/Tier%203-Static%20Quality-blue)
+![Security Engineering](https://img.shields.io/badge/Tier%204-Security%20Engineering-blue)
+![Supply Chain](https://img.shields.io/badge/Tier%205-Supply--Chain%20Hygiene-blue)
+![Reproducible Runtime](https://img.shields.io/badge/Tier%206-Reproducible%20Runtime-blue)
+![Continuous Delivery](https://img.shields.io/badge/Tier%207-Continuous%20Delivery-blue)
+![Release Engineering](https://img.shields.io/badge/Tier%208-Release%20Engineering-blue)
+![Operational Governance](https://img.shields.io/badge/Tier%209-Operational%20Governance-blue)
+[![License](https://img.shields.io/github/license/CoreyLeath-code/TransformerForge)](https://github.com/CoreyLeath-code/TransformerForge/blob/main/LICENSE)
+![Last Commit](https://img.shields.io/github/last-commit/CoreyLeath-code/TransformerForge)
+![Repo Size](https://img.shields.io/github/repo-size/CoreyLeath-code/TransformerForge)
+![Code Size](https://img.shields.io/github/languages/code-size/CoreyLeath-code/TransformerForge)
+![Top Language](https://img.shields.io/github/languages/top/CoreyLeath-code/TransformerForge)
+![Issues](https://img.shields.io/github/issues/CoreyLeath-code/TransformerForge)
+![Pull Requests](https://img.shields.io/github/issues-pr/CoreyLeath-code/TransformerForge)
+![Contributors](https://img.shields.io/github/contributors/CoreyLeath-code/TransformerForge)
+![Stars](https://img.shields.io/github/stars/CoreyLeath-code/TransformerForge?style=social)
+![Forks](https://img.shields.io/github/forks/CoreyLeath-code/TransformerForge?style=social)
+
 
 **TransformerForge** is a **production-grade Large Language Model (LLM) platform** designed to demonstrate how **modern AI systems are built in Big Tech**.
 
