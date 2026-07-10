@@ -140,16 +140,16 @@ def metrics() -> Response:
 
 
 @app.post("/summarize")
-@LATENCY_SUM.time()
 def summarize(payload: TextIn) -> dict[str, str]:
     """Summarize validated input and identify the execution backend."""
 
     REQ_COUNTER.inc()
-    try:
-        summary, backend = _summarize_text(payload)
-    except Exception as exc:
-        ERROR_COUNTER.inc()
-        raise HTTPException(status_code=503, detail="Inference backend unavailable") from exc
+    with LATENCY_SUM.time():
+        try:
+            summary, backend = _summarize_text(payload)
+        except Exception as exc:
+            ERROR_COUNTER.inc()
+            raise HTTPException(status_code=503, detail="Inference backend unavailable") from exc
 
     if not summary:
         ERROR_COUNTER.inc()
