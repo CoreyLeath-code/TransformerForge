@@ -14,8 +14,7 @@ FROM python:3.11-slim AS runtime
 ENV PATH=/opt/venv/bin:$PATH \
     PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONPATH=/app \
-    TRANSFORMERFORGE_LIGHTWEIGHT_MODE=true
+    PYTHONPATH=/app
 
 RUN useradd --create-home --uid 10001 appuser
 WORKDIR /app
