@@ -23,7 +23,7 @@ jobs:
       matrix:
         python-version: ["3.10", "3.11"]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
@@ -60,7 +60,7 @@ jobs:
     name: Container Build & Health Smoke Test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Build image
         run: docker build --pull -t transformerforge:${{ github.sha }} .
       - name: Verify live health endpoint
@@ -84,7 +84,7 @@ jobs:
     needs: [quality-and-test, container]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Verify prerequisite jobs
         env:
           QUALITY_RESULT: ${{ needs.quality-and-test.result }}
