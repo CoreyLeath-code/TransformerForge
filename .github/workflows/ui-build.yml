@@ -41,7 +41,7 @@ jobs:
         run: npm run build
 
       - name: 🚀 Upload production build (artifact)
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v7
         with:
           name: ui-dist
           path: ui/dist

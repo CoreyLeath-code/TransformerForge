@@ -50,7 +50,7 @@ jobs:
           severity: HIGH,CRITICAL
           ignore-unfixed: true
           exit-code: "0"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: trivy-filesystem-report
           path: trivy-results.txt
@@ -71,7 +71,7 @@ jobs:
           set +e
           pip-audit -r requirements.txt --format json --output pip-audit.json
           exit 0
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: pip-audit-report
           path: pip-audit.json
@@ -87,7 +87,7 @@ jobs:
           path: .
           format: cyclonedx-json
           output-file: sbom.cdx.json
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: transformerforge-sbom
           path: sbom.cdx.json
