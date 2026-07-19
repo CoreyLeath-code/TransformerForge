@@ -11,12 +11,12 @@ import math
 import os
 import platform
 import statistics
-import sys
 import time
 from pathlib import Path
 from typing import Callable
 
 os.environ["TRANSFORMERFORGE_LIGHTWEIGHT_MODE"] = "true"
+os.environ["OTEL_SDK_DISABLED"] = "true"
 
 from fastapi.testclient import TestClient
 
