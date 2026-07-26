@@ -1,6 +1,6 @@
 # TransformerForge lightweight runtime dependencies
 fastapi==0.115.6
-uvicorn[standard]==0.34.0
+uvicorn[standard]==0.51.0
 pydantic==2.10.5
 python-dotenv==1.2.2
 prometheus-client==0.26.0
