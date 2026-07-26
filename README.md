@@ -7,6 +7,7 @@ TransformerForge — Advanced Transformer Model Engineering
 [![API p95](https://img.shields.io/badge/API%20p95-3.47%20ms-blue)](#reference-results)
 [![Coverage](https://img.shields.io/badge/coverage-82%25-brightgreen)](#correctness-evidence)
 ![Python](https://img.shields.io/badge/Python-3.10%20%7C%203.11-3776AB?logo=python&logoColor=white)
+[![Pinecone](https://img.shields.io/badge/Pinecone-Optional%20RAG-00A98F?logo=pinecone&logoColor=white)](https://www.pinecone.io/)
 ![PyTorch](https://img.shields.io/badge/PyTorch-Transformer%20Runtime-EE4C2C?logo=pytorch&logoColor=white)
 ![Hugging Face](https://img.shields.io/badge/Hugging%20Face-Transformers-FFD21E?logo=huggingface&logoColor=black)
 ![Transformers](https://img.shields.io/badge/Transformers-Summarization-FF6F00)
@@ -239,6 +240,20 @@ Vector store persistence
 
 
 
+
+## Pinecone RAG backend
+
+The optional LLM/RAG dependency set supports Pinecone as a hosted vector backend while retaining FAISS for offline and CI runs.
+
+```bash
+VECTORSTORE_BACKEND=pinecone
+PINECONE_API_KEY=***
+PINECONE_INDEX_NAME=transformerforge
+PINECONE_NAMESPACE=default
+EMBEDDING_MODEL=sentence-transformers/all-MiniLM-L6-v2
+```
+
+The Pinecone index must use the embedding model's dimension and the same distance metric used by the deployment. Pinecone retrieval benchmarks must be reported separately from the deterministic lightweight benchmark below, including commit, model revision, corpus, warm-up, sample count, p95/p99 latency, recall@k, error rate, and cost. FAISS remains the default when `VECTORSTORE_BACKEND` is unset.
 
 ## Research metrics and benchmarks
 
