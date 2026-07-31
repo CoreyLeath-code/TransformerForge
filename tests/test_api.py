@@ -75,3 +75,21 @@ def test_oversized_input_is_rejected() -> None:
     response = client.post("/summarize", json={"text": "x" * 20_001})
 
     assert response.status_code == 422
+
+
+def test_undeclared_request_fields_are_rejected() -> None:
+    response = client.post(
+        "/summarize",
+        json={"text": "Valid content.", "model_override": "untrusted-model"},
+    )
+
+    assert response.status_code == 422
+
+
+def test_tracing_is_disabled_without_an_explicit_endpoint(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.delenv("OTEL_EXPORTER_OTLP_ENDPOINT", raising=False)
+
+    assert app_module._configure_tracing() is None
+

@@ -15,7 +15,7 @@ import prometheus_client as prom
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import Response
 from prometheus_client import Counter, Summary
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 APP_VERSION: Final[str] = "1.1.0"
 DEFAULT_MODEL: Final[str] = "facebook/bart-large-cnn"
@@ -33,7 +33,11 @@ app = FastAPI(
 
 
 def _configure_tracing() -> None:
-    """Enable OpenTelemetry only when its optional dependencies are available."""
+    """Enable OpenTelemetry only when an exporter endpoint is explicitly configured."""
+
+    endpoint = os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT", "").strip()
+    if not endpoint:
+        return
 
     try:
         from opentelemetry import trace
@@ -45,7 +49,6 @@ def _configure_tracing() -> None:
         return
 
     provider = TracerProvider()
-    endpoint = os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT", "http://localhost:4318/v1/traces")
     provider.add_span_processor(BatchSpanProcessor(OTLPSpanExporter(endpoint=endpoint)))
     trace.set_tracer_provider(provider)
     FastAPIInstrumentor.instrument_app(app, tracer_provider=provider)
@@ -56,6 +59,8 @@ _configure_tracing()
 
 class TextIn(BaseModel):
     """Validated summarization request."""
+
+    model_config = ConfigDict(extra="forbid")
 
     text: str = Field(min_length=1, max_length=MAX_INPUT_CHARACTERS)
     max_length: int = Field(default=128, ge=8, le=512)
