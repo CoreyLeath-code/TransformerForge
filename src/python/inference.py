@@ -60,7 +60,7 @@ _configure_tracing()
 class TextIn(BaseModel):
     """Validated summarization request."""
 
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra="forbid", strict=True)
 
     text: str = Field(min_length=1, max_length=MAX_INPUT_CHARACTERS)
     max_length: int = Field(default=128, ge=8, le=512)

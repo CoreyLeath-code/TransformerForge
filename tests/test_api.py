@@ -71,6 +71,19 @@ def test_invalid_length_bounds_are_rejected() -> None:
     assert response.status_code == 422
 
 
+@pytest.mark.parametrize(
+    "payload",
+    [
+        {"text": "Valid content.", "max_length": "128"},
+        {"text": "Valid content.", "min_length": True},
+    ],
+)
+def test_length_controls_require_native_json_integers(payload: dict[str, object]) -> None:
+    response = client.post("/summarize", json=payload)
+
+    assert response.status_code == 422
+
+
 def test_oversized_input_is_rejected() -> None:
     response = client.post("/summarize", json={"text": "x" * 20_001})
 
