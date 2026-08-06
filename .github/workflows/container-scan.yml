@@ -1,26 +1,35 @@
-name: CI
+name: TransformerForge Container Image Scan
 
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
-  test:
+  container-scan:
+    name: Build and scan container image
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v7
+      - name: Build local image
+        run: docker build --pull -t transformerforge:${{ github.sha }} .
+      - name: Scan high and critical image findings
+        uses: aquasecurity/trivy-action@master
         with:
-          python-version: "3.11"
-          cache: pip
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements-dev.txt
-      - name: Run deterministic API tests
-        env:
-          PYTHONPATH: .
-          TRANSFORMERFORGE_LIGHTWEIGHT_MODE: "true"
-        run: pytest tests/test_api.py -q
+          image-ref: transformerforge:${{ github.sha }}
+          format: table
+          output: trivy-image-results.txt
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: "1"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: trivy-image-report
+          path: trivy-image-results.txt
+          if-no-files-found: warn

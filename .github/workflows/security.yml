@@ -40,7 +40,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Generate advisory Trivy report
+      - name: Scan filesystem for high and critical findings
         uses: aquasecurity/trivy-action@master
         with:
           scan-type: fs
@@ -49,8 +49,9 @@ jobs:
           output: trivy-results.txt
           severity: HIGH,CRITICAL
           ignore-unfixed: true
-          exit-code: "0"
+          exit-code: "1"
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: trivy-filesystem-report
           path: trivy-results.txt
@@ -66,15 +67,17 @@ jobs:
           python-version: "3.11"
           cache: pip
       - run: pip install pip-audit
-      - name: Generate audit report
-        run: |
-          set +e
-          pip-audit -r requirements.txt --format json --output pip-audit.json
-          exit 0
+      - name: Audit lightweight runtime dependencies
+        run: pip-audit -r requirements.txt --format json --output pip-audit-runtime.json
+      - name: Audit optional LLM and RAG dependencies
+        run: pip-audit -r requirements-llm.txt --format json --output pip-audit-llm.json
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
-          name: pip-audit-report
-          path: pip-audit.json
+          name: pip-audit-reports
+          path: |
+            pip-audit-runtime.json
+            pip-audit-llm.json
           if-no-files-found: warn
 
   sbom:

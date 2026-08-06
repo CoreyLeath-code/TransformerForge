@@ -1,6 +1,8 @@
 # TransformerForge
 
 [![CI](https://github.com/CoreyLeath-code/TransformerForge/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/CoreyLeath-code/TransformerForge/actions/workflows/ci.yml)
+[![Security](https://github.com/CoreyLeath-code/TransformerForge/actions/workflows/security.yml/badge.svg?branch=main)](https://github.com/CoreyLeath-code/TransformerForge/actions/workflows/security.yml)
+[![CodeQL](https://github.com/CoreyLeath-code/TransformerForge/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/CoreyLeath-code/TransformerForge/actions/workflows/codeql.yml)
 [![License](https://img.shields.io/github/license/CoreyLeath-code/TransformerForge)](LICENSE)
 
 TransformerForge is an experimental Python service for transformer-backed text summarization. It has a deterministic extractive fallback for local development and CI, plus an optional full transformer/RAG dependency set for environments that provide the model resources.
