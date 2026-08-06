@@ -31,7 +31,9 @@ jobs:
       - uses: actions/checkout@v4
       - name: Scan current source tree
         run: |
-          docker run --rm -v "$PWD:/repo" -w /repo             ghcr.io/gitleaks/gitleaks:latest             detect --source . --no-git --redact --no-banner --exit-code 1
+          docker run --rm -v "$PWD:/repo" -w /repo \
+            ghcr.io/gitleaks/gitleaks:latest \
+            detect --source . --no-git --redact --no-banner --exit-code 1
 
   trivy:
     name: Trivy Filesystem Scan
