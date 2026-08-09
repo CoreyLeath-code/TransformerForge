@@ -7,10 +7,15 @@ WORKDIR /build
 COPY requirements.txt .
 RUN python -m venv /opt/venv \
     && /opt/venv/bin/pip install --upgrade pip setuptools \
-    && /opt/venv/bin/pip install -r requirements.txt
+    && /opt/venv/bin/pip install -r requirements.txt \
+    && rm -rf /opt/venv/bin/pip* \
+        /opt/venv/lib/python3.11/site-packages/pip \
+        /opt/venv/lib/python3.11/site-packages/pip-*.dist-info
 
 FROM python:3.11-slim AS python-runtime
-RUN rm -rf /root/.cache/pip /usr/local/lib/python3.11/site-packages
+RUN rm -rf /root/.cache/pip \
+    /usr/local/lib/python3.11/site-packages \
+    /usr/local/lib/python3.11/ensurepip
 
 FROM debian:trixie-slim AS runtime
 
