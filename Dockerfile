@@ -6,17 +6,31 @@ ENV PIP_DISABLE_PIP_VERSION_CHECK=1 \
 WORKDIR /build
 COPY requirements.txt .
 RUN python -m venv /opt/venv \
-    && /opt/venv/bin/pip install --upgrade pip \
-    && /opt/venv/bin/pip install -r requirements.txt
+    && /opt/venv/bin/pip install --upgrade pip setuptools \
+    && /opt/venv/bin/pip install -r requirements.txt \
+    && rm -rf /opt/venv/bin/pip* \
+        /opt/venv/lib/python3.11/site-packages/pip \
+        /opt/venv/lib/python3.11/site-packages/pip-*.dist-info
 
-FROM python:3.11-slim AS runtime
+FROM python:3.11-slim AS python-runtime
+RUN rm -rf /root/.cache/pip \
+    /usr/local/lib/python3.11/site-packages \
+    /usr/local/lib/python3.11/ensurepip
 
-ENV PATH=/opt/venv/bin:$PATH \
+FROM debian:trixie-slim AS runtime
+
+ENV PATH=/opt/venv/bin:/usr/local/bin:$PATH \
     PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONPATH=/app
 
-RUN useradd --create-home --uid 10001 appuser
+RUN apt-get update \
+    && apt-get upgrade --yes \
+    && apt-get install --yes --no-install-recommends ca-certificates \
+    && rm -rf /var/lib/apt/lists/* \
+    && useradd --create-home --uid 10001 appuser
+
+COPY --from=python-runtime /usr/local /usr/local
 WORKDIR /app
 
 COPY --from=builder /opt/venv /opt/venv

@@ -160,3 +160,8 @@ The root Makefile includes additional Java, UI, Helm, and Terraform targets. Rev
 ## License
 
 MIT. See [LICENSE](LICENSE).
+
+
+## Summary provenance and confidence boundary
+
+The summary response includes execution-mode and model-identifier metadata. Its confidence status is deliberately `not-calibrated`: it describes validated execution provenance, not factuality or a model-quality score.
