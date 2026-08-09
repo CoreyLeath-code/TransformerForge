@@ -9,7 +9,7 @@ from __future__ import annotations
 import os
 import re
 from functools import lru_cache
-from typing import Final
+from typing import Final, Literal
 
 import prometheus_client as prom
 from fastapi import FastAPI, HTTPException
@@ -55,6 +55,25 @@ def _configure_tracing() -> None:
 
 
 _configure_tracing()
+
+
+class SummaryMetadata(BaseModel):
+    """Describe execution provenance without claiming calibrated factuality."""
+
+    model_config = ConfigDict(frozen=True)
+
+    execution_mode: Literal["extractive-fallback", "transformer"]
+    model_id: str | None
+    confidence_status: Literal["not-calibrated"] = "not-calibrated"
+    validation_status: Literal["passed"] = "passed"
+
+
+class SummaryOut(BaseModel):
+    """Backward-compatible summary response with explicit provenance metadata."""
+
+    summary: str
+    backend: Literal["extractive-fallback", "transformer"]
+    metadata: SummaryMetadata
 
 
 class TextIn(BaseModel):
@@ -144,8 +163,8 @@ def metrics() -> Response:
     return Response(prom.generate_latest(), media_type=prom.CONTENT_TYPE_LATEST)
 
 
-@app.post("/summarize")
-def summarize(payload: TextIn) -> dict[str, str]:
+@app.post("/summarize", response_model=SummaryOut)
+def summarize(payload: TextIn) -> SummaryOut:
     """Summarize validated input and identify the execution backend."""
 
     REQ_COUNTER.inc()
@@ -159,4 +178,9 @@ def summarize(payload: TextIn) -> dict[str, str]:
     if not summary:
         ERROR_COUNTER.inc()
         raise HTTPException(status_code=500, detail="Inference backend returned an empty summary")
-    return {"summary": summary, "backend": backend}
+    model_id = None if backend == "extractive-fallback" else os.getenv("BASE_MODEL", DEFAULT_MODEL)
+    return SummaryOut(
+        summary=summary,
+        backend=backend,
+        metadata=SummaryMetadata(execution_mode=backend, model_id=model_id),
+    )
