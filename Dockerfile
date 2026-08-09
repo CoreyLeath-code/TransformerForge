@@ -18,7 +18,8 @@ ENV PATH=/opt/venv/bin:$PATH \
 
 RUN apt-get update \
     && apt-get upgrade --yes \
-    && rm -rf /var/lib/apt/lists/* \
+    && python -m pip uninstall --yes jaraco.context msgpack setuptools wheel \
+    && rm -rf /root/.cache/pip /var/lib/apt/lists/* \
     && useradd --create-home --uid 10001 appuser
 WORKDIR /app
 
