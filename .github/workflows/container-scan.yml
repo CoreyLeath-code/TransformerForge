@@ -21,10 +21,7 @@ jobs:
       - name: Locate packages covered by the image gate
         run: |
           docker run --rm --entrypoint /bin/sh transformerforge:${{ github.sha }} -ec '
-            find / -type f \\( -name METADATA -o -name PKG-INFO \\) -exec awk '\''
-              /^Name: (msgpack|setuptools)$/ { package = $2; next }
-              package && /^Version:/ { print FILENAME ": " package " " $2; package = "" }
-            '\'' {} +
+            find / -type f -name METADATA -exec grep -H -E "^(Name: (msgpack|setuptools)|Version:)" {} +
           '
       - name: Scan high and critical image findings
         uses: aquasecurity/trivy-action@master
