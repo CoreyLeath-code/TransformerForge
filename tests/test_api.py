@@ -106,3 +106,32 @@ def test_tracing_is_disabled_without_an_explicit_endpoint(
 
     assert app_module._configure_tracing() is None
 
+
+
+def test_summary_metadata_marks_the_fallback_as_not_calibrated() -> None:
+    response = client.post("/summarize", json={"text": "A deterministic summary is available."})
+
+    assert response.status_code == 200, response.text
+    metadata = response.json()["metadata"]
+    assert metadata == {
+        "execution_mode": "extractive-fallback",
+        "model_id": None,
+        "confidence_status": "not-calibrated",
+        "validation_status": "passed",
+    }
+
+
+def test_transformer_metadata_includes_the_configured_model(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv("TRANSFORMERFORGE_LIGHTWEIGHT_MODE", raising=False)
+    monkeypatch.setenv("BASE_MODEL", "reviewed-transformer")
+    monkeypatch.setattr(app_module, "_get_summarizer", lambda: lambda *_args, **_kwargs: [{"summary_text": "Model output."}])
+
+    response = client.post("/summarize", json={"text": "Input for the model."})
+
+    assert response.status_code == 200, response.text
+    assert response.json()["metadata"] == {
+        "execution_mode": "transformer",
+        "model_id": "reviewed-transformer",
+        "confidence_status": "not-calibrated",
+        "validation_status": "passed",
+    }
