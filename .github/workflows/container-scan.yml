@@ -18,6 +18,11 @@ jobs:
       - uses: actions/checkout@v4
       - name: Build local image
         run: docker build --pull -t transformerforge:${{ github.sha }} .
+      - name: Locate residual Python package artifacts
+        run: |
+          docker run --rm --user 0 --entrypoint /bin/sh transformerforge:${{ github.sha }} -ec '
+            find / \( -iname "*msgpack*" -o -iname "*setuptools*" \) -print || true
+          '
       - name: Scan high and critical image findings
         uses: aquasecurity/trivy-action@master
         with:
