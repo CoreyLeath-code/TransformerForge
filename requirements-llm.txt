@@ -1,6 +1,6 @@
 # Optional full LLM/RAG dependency set
 -r requirements.txt
-numpy==2.5.1
+numpy==2.4.6
 torch==2.13.0
 transformers==5.14.1
 sentence-transformers==3.3.1
