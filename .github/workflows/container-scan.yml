@@ -27,6 +27,9 @@ jobs:
           severity: HIGH,CRITICAL
           ignore-unfixed: true
           exit-code: "1"
+      - name: Show Trivy findings when the gate fails
+        if: failure()
+        run: cat trivy-image-results.txt
       - uses: actions/upload-artifact@v4
         if: always()
         with:
