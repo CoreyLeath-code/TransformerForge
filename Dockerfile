@@ -16,7 +16,10 @@ ENV PATH=/opt/venv/bin:$PATH \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONPATH=/app
 
-RUN useradd --create-home --uid 10001 appuser
+RUN apt-get update \
+    && apt-get upgrade --yes \
+    && rm -rf /var/lib/apt/lists/* \
+    && useradd --create-home --uid 10001 appuser
 WORKDIR /app
 
 COPY --from=builder /opt/venv /opt/venv
