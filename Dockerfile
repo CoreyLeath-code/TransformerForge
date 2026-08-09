@@ -1,4 +1,4 @@
-FROM python:3.11-slim AS builder
+FROM python:3.14-slim AS builder
 
 ENV PIP_DISABLE_PIP_VERSION_CHECK=1 \
     PIP_NO_CACHE_DIR=1
@@ -12,7 +12,7 @@ RUN python -m venv /opt/venv \
         /opt/venv/lib/python3.11/site-packages/pip \
         /opt/venv/lib/python3.11/site-packages/pip-*.dist-info
 
-FROM python:3.11-slim AS python-runtime
+FROM python:3.14-slim AS python-runtime
 RUN rm -rf /root/.cache/pip \
     /usr/local/lib/python3.11/site-packages \
     /usr/local/lib/python3.11/ensurepip
