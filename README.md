@@ -184,8 +184,7 @@ vX.Y.Z
     ├── ghcr.io/coreyleath-code/transformerforge:vX.Y.Z
     └── ghcr.io/coreyleath-code/transformerforge:latest
 ```
-
-## L6 engineering assessment
+Engineering assessment
 
 The strongest aspects are explicit API bounds, deterministic CI behavior, lazy heavyweight initialization, observability hooks, container smoke testing, and a clear separation between measured and unmeasured claims.
 
