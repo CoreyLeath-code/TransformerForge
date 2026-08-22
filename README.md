@@ -3,81 +3,117 @@
 [![CI](https://github.com/CoreyLeath-code/TransformerForge/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/CoreyLeath-code/TransformerForge/actions/workflows/ci.yml)
 [![Security](https://github.com/CoreyLeath-code/TransformerForge/actions/workflows/security.yml/badge.svg?branch=main)](https://github.com/CoreyLeath-code/TransformerForge/actions/workflows/security.yml)
 [![CodeQL](https://github.com/CoreyLeath-code/TransformerForge/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/CoreyLeath-code/TransformerForge/actions/workflows/codeql.yml)
+[![Container Scan](https://github.com/CoreyLeath-code/TransformerForge/actions/workflows/container-scan.yml/badge.svg?branch=main)](https://github.com/CoreyLeath-code/TransformerForge/actions/workflows/container-scan.yml)
+[![Release](https://github.com/CoreyLeath-code/TransformerForge/actions/workflows/release.yml/badge.svg)](https://github.com/CoreyLeath-code/TransformerForge/actions/workflows/release.yml)
 [![License](https://img.shields.io/github/license/CoreyLeath-code/TransformerForge)](LICENSE)
 
-TransformerForge is an experimental Python service for transformer-backed text summarization. It has a deterministic extractive fallback for local development and CI, plus an optional full transformer/RAG dependency set for environments that provide the model resources.
+TransformerForge is an experimental FastAPI summarization service with two deliberately separated execution paths: a deterministic extractive fallback used for reproducible CI and constrained environments, and an optional Hugging Face seq2seq transformer backend loaded lazily when model dependencies and resources are available.
 
-> Status: portfolio and engineering-demo project. The lightweight mode is the supported reproducible path in this repository; it is not a claim of deployed service capacity or model-quality validation.
+> **Evidence boundary:** the repository verifies the deterministic path, API contract, container health, security automation, and reproducible microbenchmark protocol. It does **not** claim validated transformer quality, RAG quality, production throughput, or calibrated factuality.
 
-## What is implemented
+## Engineering scope
 
-- A FastAPI `POST /summarize` contract with bounded text and output-length inputs.
-- Strict request schemas: blank, oversized, inconsistent, and undeclared fields are rejected.
-- Deterministic extractive fallback mode that runs without downloading a model.
-- Lazy transformer loading when lightweight mode is disabled.
-- Health and Prometheus metrics endpoints.
-- Opt-in OpenTelemetry export: no telemetry is exported unless `OTEL_EXPORTER_OTLP_ENDPOINT` is configured.
-- A lightweight benchmark runner that records its execution environment and writes machine-readable JSON.
+Implemented:
+
+- Strict `POST /summarize` schema with bounded text and output-length controls.
+- Deterministic no-download summarization mode for CI and local reproducibility.
+- Lazy Hugging Face transformer loading with configurable `BASE_MODEL`.
+- Explicit execution provenance in responses (`backend`, `model_id`, confidence status).
+- Prometheus metrics and opt-in OpenTelemetry export.
+- Non-root multi-stage container image with a live health check.
+- Python 3.10/3.11 CI, API contract tests, container smoke test, security scanning, SBOM automation, and reproducible lightweight benchmarks.
+- Semantic-tag GitHub Release automation with source archive, SHA-256 checksum, and GHCR image publishing.
+
+Not claimed:
+
+- Production SLOs or availability.
+- Authentication/authorization or multi-tenant isolation.
+- Validated RAG retrieval quality.
+- ROUGE/BERTScore/factuality/hallucination improvements.
+- Full-model load, concurrency, GPU, or network benchmarks.
 
 ## Architecture
 
 ```mermaid
 flowchart LR
-    Client --> API["FastAPI /summarize"]
-    API --> Validate["Pydantic validation"]
-    Validate --> Mode{"Lightweight mode?"}
-    Mode -->|yes| Fallback["Deterministic extractive summary"]
-    Mode -->|no| Model["Lazy transformer pipeline"]
-    Fallback --> Response
-    Model --> Response
-    API --> Metrics["/metrics"]
-    API --> Health["/health"]
-    API -. "endpoint configured" .-> Tracing["OTLP exporter"]
+    C[Client] --> A[FastAPI /summarize]
+    A --> V[Pydantic validation]
+    V --> M{LIGHTWEIGHT_MODE?}
+    M -->|true| F[Deterministic extractive fallback]
+    M -->|false| L[Lazy Hugging Face pipeline]
+    L --> H[Configured seq2seq model]
+    F --> R[Summary + provenance]
+    H --> R
+    A --> P[/metrics Prometheus]
+    A --> E[/health]
+    A -. configured endpoint .-> O[OpenTelemetry OTLP]
 ```
 
-The API implementation lives in [`src/python/inference.py`](src/python/inference.py). The historical RAG prototype is retained separately under [`src/src/llm`](src/src/llm); it is not exercised by the lightweight API contract suite.
+The verified service path is implemented in `src/python/inference.py`. A separate historical RAG prototype remains under `src/src/llm`; it is not represented as part of the verified API path.
 
-## Quick start: deterministic mode
+## System design flow
 
-Python 3.10 or 3.11 is the CI-supported runtime matrix.
+```mermaid
+flowchart TD
+    Req[HTTP request] --> Parse[Parse + strict schema]
+    Parse --> Bounds{Valid bounds?}
+    Bounds -->|no| Reject[4xx validation response]
+    Bounds -->|yes| Count[Increment request counter]
+    Count --> Timer[Start latency observation]
+    Timer --> Mode{Execution mode}
+    Mode -->|fallback| Extract[Sentence-bound extractive helper]
+    Mode -->|transformer| Cache[Cached lazy model loader]
+    Cache --> Infer[Transformer inference]
+    Extract --> Empty{Non-empty result?}
+    Infer --> Empty
+    Empty -->|no| Error[Increment error counter + 5xx]
+    Empty -->|yes| Meta[Attach backend/model provenance]
+    Meta --> Resp[Validated response]
+```
+
+## Quickstart
+
+Python 3.10 and 3.11 are exercised in CI.
 
 ```bash
 python -m venv .venv
-# macOS/Linux
 . .venv/bin/activate
-# Windows PowerShell: .\.venv\Scripts\Activate.ps1
-
 python -m pip install --upgrade pip
 python -m pip install -r requirements-dev.txt
 ```
 
-Run the verified lightweight test path:
+Run the verified deterministic contract:
 
 ```bash
-# macOS/Linux
 TRANSFORMERFORGE_LIGHTWEIGHT_MODE=true pytest -q tests/test_api.py
-
-# Windows PowerShell
-$env:TRANSFORMERFORGE_LIGHTWEIGHT_MODE = "true"; pytest -q tests/test_api.py
 ```
 
-Start the API in the same mode:
+Start the API:
 
 ```bash
-# macOS/Linux
-TRANSFORMERFORGE_LIGHTWEIGHT_MODE=true uvicorn src.python.inference:app --reload
-
-# Windows PowerShell
-$env:TRANSFORMERFORGE_LIGHTWEIGHT_MODE = "true"; uvicorn src.python.inference:app --reload
+TRANSFORMERFORGE_LIGHTWEIGHT_MODE=true \
+uvicorn src.python.inference:app --host 0.0.0.0 --port 8000
 ```
 
-Try it:
+Call it:
 
 ```bash
 curl -X POST http://127.0.0.1:8000/summarize \
-  -H "content-type: application/json" \
-  -d '{"text":"TransformerForge validates bounded requests. It supports deterministic local execution."}'
+  -H 'content-type: application/json' \
+  -d '{"text":"TransformerForge validates bounded requests. It supports deterministic local execution.","min_length":8,"max_length":128}'
 ```
+
+## Container quickstart
+
+```bash
+docker build -t transformerforge:local .
+docker run --rm -p 8000:8000 \
+  -e TRANSFORMERFORGE_LIGHTWEIGHT_MODE=true \
+  transformerforge:local
+curl --fail http://127.0.0.1:8000/health
+```
+
+The image runs as a non-root user and exposes port 8000.
 
 ## API contract
 
@@ -86,82 +122,119 @@ curl -X POST http://127.0.0.1:8000/summarize \
 | `GET /` | Service identity and version |
 | `GET /health` | Lightweight liveness response |
 | `GET /metrics` | Prometheus exposition format |
-| `POST /summarize` | Summarize validated text |
+| `POST /summarize` | Validated summarization request |
 
-`POST /summarize` accepts `text`, optional `min_length` (1–256), and optional `max_length` (8–512). `text` is limited to 20,000 characters. Unknown JSON fields are rejected, which keeps the public contract explicit and prevents unsupported per-request controls from being silently ignored.
+`POST /summarize` accepts `text`, optional `min_length` (1–256), and optional `max_length` (8–512). Input text is limited to 20,000 characters, unknown fields are rejected, and `min_length` cannot exceed `max_length`.
 
-## Configuration and operating modes
+## Reproducibility
+
+The deterministic benchmark runner is committed at `benchmarks/benchmark_lightweight.py` and forces lightweight mode with telemetry disabled.
+
+```bash
+TRANSFORMERFORGE_LIGHTWEIGHT_MODE=true \
+python benchmarks/benchmark_lightweight.py
+```
+
+It writes:
+
+```text
+benchmark-results/benchmark-results.json
+benchmark-results/benchmark-results.md
+```
+
+Protocol:
+
+| Workload | Warm-up | Timed iterations |
+|---|---:|---:|
+| `fallback_summary` | 1,000 | 20,000 |
+| `request_validation` | 1,000 | 20,000 |
+| `api_summarize_request` | 1,000 | 3,000 |
+
+Each workload reports mean, median, p95, p99, standard deviation, and derived single-thread operations/second. CI executes this on Python 3.11 and uploads benchmark artifacts together with coverage/JUnit evidence.
+
+### Research-style interpretation
+
+These are deterministic **microbenchmarks**, not production service benchmarks. `api_summarize_request` uses FastAPI `TestClient`, so it does not include real network, TLS, proxy, process-to-process, or concurrent-load costs. Results are environment-specific and should always be accompanied by commit SHA, Python/runtime, runner/hardware, warm-up count, sample count, and execution mode.
+
+No transformer-quality or RAG-quality number is published because the repository does not yet commit a versioned evaluation corpus and acceptance protocol. See [Metrics.MD](Metrics.MD).
+
+## Configuration
 
 | Variable | Default | Effect |
 |---|---|---|
-| `TRANSFORMERFORGE_LIGHTWEIGHT_MODE` | `false` | Enables the deterministic no-download fallback when `true`, `1`, or `yes`. |
-| `BASE_MODEL` | `facebook/bart-large-cnn` | Model identifier used only by the full transformer path. |
-| `OTEL_EXPORTER_OTLP_ENDPOINT` | unset | Enables OTLP tracing to the supplied endpoint. Leave unset for no exporter. |
-| `VECTORSTORE_BACKEND` | `faiss` | Used by the separate RAG prototype; `pinecone` requires its documented credentials. |
+| `TRANSFORMERFORGE_LIGHTWEIGHT_MODE` | `false` | Uses deterministic extractive mode when `true`, `1`, or `yes`. |
+| `BASE_MODEL` | `facebook/bart-large-cnn` | Hugging Face model used by the transformer path. |
+| `OTEL_EXPORTER_OTLP_ENDPOINT` | unset | Enables OTLP tracing when explicitly configured. |
+| `VECTORSTORE_BACKEND` | `faiss` | Applies to the separate historical RAG prototype. |
 
-For the optional transformer/RAG stack, install `requirements-llm.txt`. That path can download models and may require substantial CPU, memory, or accelerator resources; it is not included in the deterministic CI contract.
+Install `requirements-llm.txt` only when exercising the optional transformer/RAG stack. That path can download substantial model artifacts and is outside the deterministic CI contract.
 
-## Verification evidence
+## Verification and release contract
 
-The repository's CI workflow runs syntax validation, targeted Ruff correctness checks, API contract tests on Python 3.10 and 3.11, a container health smoke test, and a deterministic benchmark on Python 3.11. Test, coverage, JUnit, and benchmark files are uploaded as workflow artifacts.
+CI validates Python syntax, targeted Ruff correctness checks, API tests with coverage on Python 3.10/3.11, a container build plus live `/health` smoke test, and the benchmark protocol. Security workflows include CodeQL, dependency review, container scanning, and additional supply-chain checks.
 
-Run the benchmark locally after installing development dependencies:
+A semantic version tag matching `v*.*.*` triggers the release workflow. The workflow can also be manually dispatched for an existing tag. A successful release publishes:
 
-```bash
-# macOS/Linux
-TRANSFORMERFORGE_LIGHTWEIGHT_MODE=true python benchmarks/benchmark_lightweight.py
-
-# Windows PowerShell
-$env:TRANSFORMERFORGE_LIGHTWEIGHT_MODE = "true"; python benchmarks/benchmark_lightweight.py
+```text
+vX.Y.Z
+├── GitHub Release
+│   ├── transformerforge-vX.Y.Z.tar.gz
+│   └── transformerforge-vX.Y.Z.sha256
+└── GHCR
+    ├── ghcr.io/coreyleath-code/transformerforge:vX.Y.Z
+    └── ghcr.io/coreyleath-code/transformerforge:latest
 ```
 
-It writes `benchmark-results/benchmark-results.json` and `benchmark-results/benchmark-results.md`. These benchmark the deterministic local path only; they do not measure transformer inference, concurrent traffic, or model quality. Treat results as environment-specific regression evidence, not service-level objectives.
+## L6 engineering assessment
 
-## Security and reliability boundaries
+The strongest aspects are explicit API bounds, deterministic CI behavior, lazy heavyweight initialization, observability hooks, container smoke testing, and a clear separation between measured and unmeasured claims.
 
-- The API validates request sizes and rejects unknown fields before inference.
-- Heavy model loading is lazy, so lightweight startup and tests do not require model downloads.
-- Telemetry is disabled by default; configure an explicit collector endpoint before export.
-- Dependency, secret, static-analysis, and SBOM workflows live in [`.github/workflows`](.github/workflows).
-- Report vulnerabilities through [SECURITY.md](SECURITY.md); contribution expectations are in [CONTRIBUTING.md](CONTRIBUTING.md).
+The highest-value next steps are:
 
-The project does not provide authentication, authorization, persistent storage, model-evaluation datasets, or production deployment guarantees. Those capabilities require a defined use case, threat model, operational owner, and evaluated model artifacts.
+1. Commit a versioned summarization evaluation corpus with task-specific quality metrics and error taxonomy.
+2. Add full-model tests pinned to an exact model revision rather than a mutable model identifier alone.
+3. Add controlled concurrency/load experiments with real HTTP transport and documented CPU/GPU hardware.
+4. Add readiness semantics that distinguish process liveness from transformer-backend readiness.
+5. Add authentication, request budgets, rate limits, and explicit abuse/threat-model controls before any exposed deployment.
+6. Add model/artifact integrity verification and release provenance/signing for model-bearing deployments.
+7. Validate RAG independently with retrieval relevance metrics before presenting it as part of the supported system.
+
+See [L6_AUDIT.md](L6_AUDIT.md) for the detailed review.
+
+## Interview / reviewer Q&A
+
+**Why is the deterministic fallback important?**  
+It gives CI a stable, no-download path for validating schemas, failure behavior, observability plumbing, packaging, and regression characteristics without conflating those checks with transformer quality.
+
+**Does the benchmark prove the API can handle production traffic?**  
+No. It is an in-process deterministic microbenchmark. Capacity requires real transport, controlled concurrency, hardware disclosure, repeated trials, and saturation/error analysis.
+
+**Is RAG part of the verified serving architecture?**  
+No. A historical RAG prototype exists separately, but the verified `/summarize` path does not route through it.
+
+**Does `confidence_status=not-calibrated` mean the summary is unreliable?**  
+It means the service deliberately avoids presenting an unsupported factuality/confidence score. Calibration requires an evaluation dataset and a defensible mapping between scores and real-world correctness.
+
+**Why publish both a GitHub Release and GHCR package?**  
+The source archive/checksum provides an inspectable versioned source artifact, while GHCR provides the containerized execution artifact associated with that release line.
 
 ## Repository map
 
 ```text
-src/python/inference.py        FastAPI service and lightweight/full inference modes
-tests/test_api.py              API contract and failure-path tests
+src/python/inference.py          Verified FastAPI service
+src/python/attention.py          Attention-related experimentation
+src/python/train.py              Training experimentation
+src/src/llm/                     Historical optional LLM/RAG prototype
+tests/test_api.py                API contract/failure-path tests
 benchmarks/benchmark_lightweight.py
-                               Deterministic benchmark runner
-requirements.txt               Lightweight runtime dependencies
-requirements-llm.txt           Optional transformer/RAG dependencies
-Dockerfile                     Container build and health-check contract
-.github/workflows/             CI, security, release, and dependency automation
+                                Deterministic benchmark protocol
+requirements.txt                 Container/runtime dependencies
+requirements-dev.txt             CI/development dependencies
+requirements-llm.txt             Optional transformer/RAG stack
+Dockerfile                       Non-root multi-stage service image
+.github/workflows/               CI, security, release automation
 ```
-
-## Development workflow
-
-```bash
-make test      # Builds the optional C++ attention library, then runs the suite
-make lint      # Runs Ruff and mypy for the Python sources
-docker build -t transformerforge .
-```
-
-The root Makefile includes additional Java, UI, Helm, and Terraform targets. Review the relevant files before running infrastructure or deployment commands; this repository does not apply cloud infrastructure automatically.
-
-## Limitations and next work
-
-- Establish a versioned evaluation corpus and task-appropriate quality metrics before making any model-quality claim.
-- Add load tests with explicit concurrency, hardware, and transport assumptions before publishing API throughput targets.
-- Validate full-model behavior and RAG retrieval quality separately from the deterministic fallback.
-- Pin and verify third-party GitHub Actions before treating security automation as a release gate.
 
 ## License
 
 MIT. See [LICENSE](LICENSE).
-
-
-## Summary provenance and confidence boundary
-
-The summary response includes execution-mode and model-identifier metadata. Its confidence status is deliberately `not-calibrated`: it describes validated execution provenance, not factuality or a model-quality score.
