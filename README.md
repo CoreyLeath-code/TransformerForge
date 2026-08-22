@@ -36,17 +36,17 @@ Not claimed:
 
 ```mermaid
 flowchart LR
-    C[Client] --> A[FastAPI /summarize]
-    A --> V[Pydantic validation]
-    V --> M{LIGHTWEIGHT_MODE?}
-    M -->|true| F[Deterministic extractive fallback]
-    M -->|false| L[Lazy Hugging Face pipeline]
-    L --> H[Configured seq2seq model]
-    F --> R[Summary + provenance]
-    H --> R
-    A --> P[/metrics Prometheus]
-    A --> E[/health]
-    A -. configured endpoint .-> O[OpenTelemetry OTLP]
+    Client["Client"] --> API["FastAPI POST /summarize"]
+    API --> Validate["Pydantic request validation"]
+    Validate --> Mode{"Execution mode"}
+    Mode -->|Lightweight| Fallback["Deterministic extractive fallback"]
+    Mode -->|Transformer| Loader["Lazy Hugging Face pipeline"]
+    Loader --> Model["Configured seq2seq model"]
+    Fallback --> Response["Summary + provenance metadata"]
+    Model --> Response
+    API --> Metrics["Prometheus /metrics"]
+    API --> Health["Liveness /health"]
+    API -. "OTLP endpoint configured" .-> Tracing["OpenTelemetry exporter"]
 ```
 
 The verified service path is implemented in `src/python/inference.py`. A separate historical RAG prototype remains under `src/src/llm`; it is not represented as part of the verified API path.
@@ -55,20 +55,20 @@ The verified service path is implemented in `src/python/inference.py`. A separat
 
 ```mermaid
 flowchart TD
-    Req[HTTP request] --> Parse[Parse + strict schema]
-    Parse --> Bounds{Valid bounds?}
-    Bounds -->|no| Reject[4xx validation response]
-    Bounds -->|yes| Count[Increment request counter]
-    Count --> Timer[Start latency observation]
-    Timer --> Mode{Execution mode}
-    Mode -->|fallback| Extract[Sentence-bound extractive helper]
-    Mode -->|transformer| Cache[Cached lazy model loader]
-    Cache --> Infer[Transformer inference]
-    Extract --> Empty{Non-empty result?}
-    Infer --> Empty
-    Empty -->|no| Error[Increment error counter + 5xx]
-    Empty -->|yes| Meta[Attach backend/model provenance]
-    Meta --> Resp[Validated response]
+    Request["HTTP POST /summarize"] --> Parse["Parse JSON + strict schema"]
+    Parse --> Bounds{"Request bounds valid?"}
+    Bounds -->|No| Reject["Return 4xx validation response"]
+    Bounds -->|Yes| Count["Increment inference request counter"]
+    Count --> Timer["Start latency observation"]
+    Timer --> Backend{"Select execution backend"}
+    Backend -->|Fallback| Extract["Run deterministic sentence extraction"]
+    Backend -->|Transformer| Cache["Resolve cached lazy model loader"]
+    Cache --> Infer["Run transformer inference"]
+    Extract --> Result{"Summary non-empty?"}
+    Infer --> Result
+    Result -->|No| Error["Increment error counter + return 5xx"]
+    Result -->|Yes| Metadata["Attach backend + model provenance"]
+    Metadata --> Response["Return validated summary response"]
 ```
 
 ## Quickstart
@@ -184,7 +184,8 @@ vX.Y.Z
     ├── ghcr.io/coreyleath-code/transformerforge:vX.Y.Z
     └── ghcr.io/coreyleath-code/transformerforge:latest
 ```
-Engineering assessment
+
+## L6 engineering assessment
 
 The strongest aspects are explicit API bounds, deterministic CI behavior, lazy heavyweight initialization, observability hooks, container smoke testing, and a clear separation between measured and unmeasured claims.
 
