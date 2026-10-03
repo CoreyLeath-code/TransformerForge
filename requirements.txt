@@ -1,5 +1,5 @@
 # TransformerForge lightweight runtime dependencies
-fastapi==0.141.1
+fastapi==0.142.1
 uvicorn[standard]==0.53.0
 pydantic==2.13.5
 python-dotenv==1.2.3
